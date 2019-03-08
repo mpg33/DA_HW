@@ -1,0 +1,62 @@
+Sub VBA_HW_Macro()
+
+For Each ws In Worksheets
+
+   Dim LastRow As Long
+   Dim WorksheetName As String
+
+   LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+   WorksheetName = ws.Name
+ 
+   ws.Range("I1").Value = "Ticker"
+   ws.Range("J1").Value = "Yearly Change"
+   ws.Range("K1").Value = "Percent Change"
+   ws.Range("L1").Value = "Total Stock Volume"
+
+   Dim i As Long
+   Dim Special_Ticker As Long
+   Dim TickerTotal As Double
+   Dim BeginningRow As Long
+   Dim EndRow As Long
+   Dim YearlyChange As Double
+   Dim PercentChange As Double
+
+   Special_Ticker = 1
+   TickerTotal = 0
+
+   For i = 2 To LastRow
+       If ws.Range("A" & (i + 1)).Value <> ws.Range("A" & i).Value Then
+
+           Special_Ticker = Special_Ticker + 1
+           BeginningRow = 2
+           EndRow = i
+
+           ws.Range("I" & Special_Ticker).Value = ws.Range("A" & i).Value
+           TickerTotal = TickerTotal + ws.Range("G" & i).Value
+
+           ws.Range("L" & Special_Ticker).Value = TickerTotal
+
+           ws.Range("J" & Special_Ticker).Value = ws.Range("F" & EndRow).Value - ws.Range("C" & BeginningRow).Value
+           YearlyChange = ws.Range("J" & Special_Ticker).Value
+
+       If YearlyChange > 0 Then
+           ws.Range("J" & Special_Ticker).Interior.ColorIndex = 4
+
+           ElseIf ws.Range("J" & Special_Ticker).Value < 0 Then
+           ws.Range("J" & Special_Ticker).Interior.ColorIndex = 3
+
+           Else
+           ws.Range("J" & Special_Ticker).Interior.ColorIndex = 0
+
+       End If
+           ws.Range("K" & Special_Ticker).Value = YearlyChange / ws.Range("C" & BeginningRow).Value
+
+
+       End If
+       TickerTotal = 0
+       BeginningRow = EndRow + 1
+   Next i
+
+  Next ws
+
+End Sub
